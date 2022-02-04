@@ -1,4 +1,4 @@
-package com.kinandcarta.transactionsapi.domain;
+package com.kinandcarta.transactionsapi.domain.entity;
 
 import lombok.*;
 

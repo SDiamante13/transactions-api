@@ -1,6 +1,6 @@
 package com.kinandcarta.transactionsapi;
 
-import com.kinandcarta.transactionsapi.domain.Account;
+import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
