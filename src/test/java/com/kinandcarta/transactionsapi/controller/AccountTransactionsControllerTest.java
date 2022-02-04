@@ -2,10 +2,10 @@ package com.kinandcarta.transactionsapi.controller;
 
 import com.kinandcarta.transactionsapi.domain.response.AccountTransactionResponse;
 import com.kinandcarta.transactionsapi.service.TransactionsService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,17 +21,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionsControllerTest {
+class AccountTransactionsControllerTest {
 
     private MockMvc mockMvc;
 
     @Mock
     private TransactionsService mockTransactionsService;
 
+    @InjectMocks
+    private AccountTransactionsController accountTransactionsController;
+
     @BeforeEach
     void setUp() {
-        TransactionsController transactionsController = new TransactionsController(mockTransactionsService);
-        mockMvc = MockMvcBuilders.standaloneSetup(transactionsController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(accountTransactionsController).build();
     }
 
     @Test
@@ -42,6 +44,7 @@ class TransactionsControllerTest {
                 "Bruce Wayne",
                 emptyList()
             ));
+
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
             .andDo(print())
             .andExpect(status().isOk())
