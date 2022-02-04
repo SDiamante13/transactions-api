@@ -9,10 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.Optional;
 
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,12 +20,23 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceTest {
 
-    public static final Account ACCOUNT_WITH_NO_TRANSACTIONS =
-            new Account(123L, "Bruce Wayne", emptySet());
-    @Mock
-    AccountRepository mockAccountRepository;
+    private static final Account ACCOUNT_WITH_NO_TRANSACTIONS = 
+            new Account(
+            123L,
+            "Bruce Wayne",
+            emptySet()
+    );
+    private static final AccountTransactionResponse RESPONSE_WITH_NO_TRANSACTIONS = 
+            new AccountTransactionResponse(
+            123L,
+            "Bruce Wayne",
+            emptyList()
+    );
 
-    TransactionsService transactionsService;
+    @Mock
+    private AccountRepository mockAccountRepository;
+
+    private TransactionsService transactionsService;
 
     @BeforeEach
     void setUp() {
@@ -36,15 +46,10 @@ class TransactionsServiceTest {
     @Test
     void returnsAccountTransactionResponseWithNoTransactionsWhenThereAreNoTransactionsPresentForGivenAccount() {
         given(mockAccountRepository.findById(anyLong()))
-                .willReturn(Optional.of(
-                        ACCOUNT_WITH_NO_TRANSACTIONS)
-                );
+                .willReturn(Optional.of(ACCOUNT_WITH_NO_TRANSACTIONS));
 
         AccountTransactionResponse actualResponse = transactionsService.getTransactions(123L);
 
-        AccountTransactionResponse expectedResponse = new AccountTransactionResponse(
-                123L, "Bruce Wayne", emptyList());
-
-        assertThat(actualResponse).isEqualTo(expectedResponse);
+        assertThat(actualResponse).isEqualTo(RESPONSE_WITH_NO_TRANSACTIONS);
     }
 }

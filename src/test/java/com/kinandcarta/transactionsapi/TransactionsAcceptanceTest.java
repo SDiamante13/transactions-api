@@ -45,7 +45,7 @@ class TransactionsAcceptanceTest {
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId", Matchers.is("123")))
-                .andExpect(jsonPath("$.transactions", Matchers.is("[]")));
+                .andExpect(jsonPath("$.accountId", Matchers.is(123)))
+                .andExpect(jsonPath("$.transactions").isEmpty());
     }
 }
