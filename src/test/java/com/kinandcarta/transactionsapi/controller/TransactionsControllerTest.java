@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class TransactionsControllerTest {
+class TransactionsControllerTest {
 
     private MockMvc mockMvc;
 
@@ -41,10 +42,10 @@ public class TransactionsControllerTest {
                 "Bruce Wayne",
                 emptyList()
             ));
-        mockMvc.perform(get("/account/{accountId}/transactions", 123))
+        mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accountId", Matchers.is("123")))
-            .andExpect(jsonPath("$.transactions", Matchers.is("[]")));
+            .andExpect(jsonPath("$.accountId", is(123)))
+            .andExpect(jsonPath("$.transactions").isEmpty());
     }
 }
