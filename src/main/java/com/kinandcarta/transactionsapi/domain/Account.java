@@ -1,18 +1,15 @@
 package com.kinandcarta.transactionsapi.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "ACCOUNTS")
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
@@ -21,6 +18,8 @@ public class Account {
 
     private String memberName;
 
-    @OneToMany(mappedBy = "ACCOUNTS")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "transaction_id")
+    @ToString.Exclude
     private Set<Transaction> transactions;
 }

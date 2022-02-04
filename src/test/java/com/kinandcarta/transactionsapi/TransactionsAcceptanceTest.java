@@ -14,6 +14,7 @@ import static java.util.Collections.emptySet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,6 +44,7 @@ class TransactionsAcceptanceTest {
     void returnsEmptyTransactionListWhenAccountHasNoTransactions() throws Exception {
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountId", Matchers.is("123")))
                 .andExpect(jsonPath("$.transactions", Matchers.is("[]")));
     }

@@ -1,20 +1,22 @@
 package com.kinandcarta.transactionsapi.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "TRANSACTIONS")
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
     @Id
+    @Column(name = "transaction_id")
     private long transactionId;
     private long date;
     private double amount;
