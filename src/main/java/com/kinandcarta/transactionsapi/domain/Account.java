@@ -14,12 +14,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class Account {
     @Id
+    @Column(name="ACCOUNT_ID")
     private long accountId;
 
     private String memberName;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "transaction_id")
-    @ToString.Exclude
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<Transaction> transactions;
 }

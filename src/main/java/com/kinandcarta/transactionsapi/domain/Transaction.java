@@ -2,10 +2,7 @@ package com.kinandcarta.transactionsapi.domain;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "TRANSACTIONS")
@@ -16,10 +13,14 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Transaction {
     @Id
-    @Column(name = "transaction_id")
+    @Column(name = "TRANSACTION_ID")
     private long transactionId;
     private long date;
     private double amount;
     private String merchantName;
     private String summary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACCOUNT_ID")
+    private Account account;
 }
