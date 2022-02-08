@@ -6,7 +6,8 @@ import com.kinandcarta.transactionsapi.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 
 @Service
 public class TransactionsService {
@@ -18,6 +19,6 @@ public class TransactionsService {
 
     public List<TransactionResponse> getTransactions(long accountId) {
         List<Transaction> transactionList = transactionRepository.findAllByAccount_AccountId(accountId);
-        return transactionList.stream().map(TransactionResponse::of).collect(Collectors.toList());
+        return emptyList();
     }
 }
