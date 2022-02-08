@@ -1,6 +1,8 @@
 package com.kinandcarta.transactionsapi.controller;
 
+import com.kinandcarta.transactionsapi.domain.exception.AccountNotFoundException;
 import com.kinandcarta.transactionsapi.service.TransactionsService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,7 +34,9 @@ class AccountTransactionsControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(accountTransactionsController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(accountTransactionsController)
+                .setControllerAdvice(new TransactionsApiExceptionHandler())
+                .build();
     }
 
     @Test
@@ -43,5 +48,20 @@ class AccountTransactionsControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void returnsNotFoundErrorMessageWhenServiceThrowsAnAccountNotFoundException() throws Exception {
+        given(mockTransactionsService.getTransactions(anyLong()))
+                .willThrow(new AccountNotFoundException(999L));
+
+        mockMvc.perform(get("/accounts/{accountId}/transactions", 999))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.type", is("AccountNotFoundException")))
+                .andExpect(jsonPath("$.error.message",
+                                is("The card member account with an id of 999 was not found.")
+                        )
+                );
     }
 }
