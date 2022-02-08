@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Account {
     @Id
-    @Column(name="ACCOUNT_ID")
+    @Column(name = "ACCOUNT_ID")
     private long accountId;
 
     private String memberName;
