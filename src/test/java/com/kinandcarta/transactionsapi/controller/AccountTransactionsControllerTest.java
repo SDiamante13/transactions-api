@@ -1,6 +1,5 @@
 package com.kinandcarta.transactionsapi.controller;
 
-import com.kinandcarta.transactionsapi.domain.response.AccountTransactionResponse;
 import com.kinandcarta.transactionsapi.service.TransactionsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static java.util.Collections.emptyList;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,16 +37,11 @@ class AccountTransactionsControllerTest {
     @Test
     void returnsEmptyTransactionsWhenServiceReturnsAccountWithNoTransactions() throws Exception {
         given(mockTransactionsService.getTransactions(anyLong()))
-            .willReturn(new AccountTransactionResponse(
-                123L,
-                "Bruce Wayne",
-                emptyList()
-            ));
+            .willReturn(emptyList());
 
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accountId", is(123)))
-            .andExpect(jsonPath("$.transactions").isEmpty());
+            .andExpect(jsonPath("$").isEmpty());
     }
 }

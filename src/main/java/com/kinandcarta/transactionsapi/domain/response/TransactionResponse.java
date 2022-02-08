@@ -13,6 +13,7 @@ public class TransactionResponse {
     private double amount;
     private String merchantName;
     private String summary;
+    private String accountId;
 
     public static TransactionResponse of(Transaction transaction) {
         return new TransactionResponse(
@@ -20,7 +21,8 @@ public class TransactionResponse {
                 DateUtils.formatEpochDateAsString(transaction.getDate(), "yyyy-MM-dd"),
                 transaction.getAmount(),
                 transaction.getMerchantName(),
-                transaction.getSummary()
+                transaction.getSummary(),
+                String.valueOf(transaction.getAccount().getAccountId())
         );
     }
 }

@@ -1,23 +1,23 @@
 package com.kinandcarta.transactionsapi.service;
 
-import com.kinandcarta.transactionsapi.domain.entity.Account;
-import com.kinandcarta.transactionsapi.domain.response.AccountTransactionResponse;
-import com.kinandcarta.transactionsapi.repository.AccountRepository;
+import com.kinandcarta.transactionsapi.domain.entity.Transaction;
+import com.kinandcarta.transactionsapi.domain.response.TransactionResponse;
+import com.kinandcarta.transactionsapi.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionsService {
-    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
-    public TransactionsService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public TransactionsService(TransactionRepository accountRepository) {
+        this.transactionRepository = accountRepository;
     }
 
-    public AccountTransactionResponse getTransactions(long accountId) {
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        Account accountEntity = optionalAccount.get();
-        return AccountTransactionResponse.of(accountEntity);
+    public List<TransactionResponse> getTransactions(long accountId) {
+        List<Transaction> transactionList = transactionRepository.findAllByAccount_AccountId(accountId);
+        return transactionList.stream().map(TransactionResponse::of).collect(Collectors.toList());
     }
 }

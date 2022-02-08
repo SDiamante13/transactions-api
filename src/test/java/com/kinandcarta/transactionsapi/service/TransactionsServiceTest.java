@@ -1,18 +1,16 @@
 package com.kinandcarta.transactionsapi.service;
 
-import com.kinandcarta.transactionsapi.domain.entity.Account;
-import com.kinandcarta.transactionsapi.domain.response.AccountTransactionResponse;
-import com.kinandcarta.transactionsapi.repository.AccountRepository;
+import com.kinandcarta.transactionsapi.domain.response.TransactionResponse;
+import com.kinandcarta.transactionsapi.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -20,36 +18,23 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceTest {
 
-    private static final Account ACCOUNT_WITH_NO_TRANSACTIONS = 
-            new Account(
-            123L,
-            "Bruce Wayne",
-            emptySet()
-    );
-    private static final AccountTransactionResponse RESPONSE_WITH_NO_TRANSACTIONS = 
-            new AccountTransactionResponse(
-            123L,
-            "Bruce Wayne",
-            emptyList()
-    );
-
     @Mock
-    private AccountRepository mockAccountRepository;
+    private TransactionRepository mockTransactionRepository;
 
     private TransactionsService transactionsService;
 
     @BeforeEach
     void setUp() {
-        transactionsService = new TransactionsService(mockAccountRepository);
+        transactionsService = new TransactionsService(mockTransactionRepository);
     }
 
     @Test
     void returnsAccountTransactionResponseWithNoTransactionsWhenThereAreNoTransactionsPresentForGivenAccount() {
-        given(mockAccountRepository.findById(anyLong()))
-                .willReturn(Optional.of(ACCOUNT_WITH_NO_TRANSACTIONS));
+        given(mockTransactionRepository.findAllByAccount_AccountId(anyLong()))
+                .willReturn(emptyList());
 
-        AccountTransactionResponse actualResponse = transactionsService.getTransactions(123L);
+        List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L);
 
-        assertThat(actualResponse).isEqualTo(RESPONSE_WITH_NO_TRANSACTIONS);
+        assertThat(actualResponse).isEqualTo(emptyList());
     }
 }

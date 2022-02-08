@@ -2,12 +2,13 @@ package com.kinandcarta.transactionsapi;
 
 import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
-import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static java.util.Collections.emptySet;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 class TransactionsAcceptanceTest {
@@ -32,6 +34,11 @@ class TransactionsAcceptanceTest {
         accountRepository.save(account);
     }
 
+    @AfterEach
+    void tearDown() {
+        accountRepository.deleteAll();
+    }
+
     /***
      * Scenario 1: Retrieve transactions for account with no transactions
      *
@@ -45,7 +52,6 @@ class TransactionsAcceptanceTest {
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId", Matchers.is(123)))
-                .andExpect(jsonPath("$.transactions").isEmpty());
+                .andExpect(jsonPath("$").isEmpty());
     }
 }

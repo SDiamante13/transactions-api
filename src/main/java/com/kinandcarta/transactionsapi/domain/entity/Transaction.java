@@ -1,17 +1,16 @@
 package com.kinandcarta.transactionsapi.domain.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "TRANSACTIONS")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
@@ -22,4 +21,7 @@ public class Transaction {
     private double amount;
     private String merchantName;
     private String summary;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACCOUNT_ID")
+    private Account account;
 }
