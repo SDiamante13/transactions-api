@@ -3,6 +3,7 @@ package com.kinandcarta.transactionsapi;
 import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.domain.entity.Transaction;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -105,5 +107,24 @@ class TransactionsAcceptanceTest {
             .getContentAsString();
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
+
+    /***
+     * Scenario 2: Account does not exist in database
+     *
+     * GIVEN a card member account id that does not exist
+     * WHEN I request a list of transactions for that account
+     * THEN I will receive a not found response
+     * AND I will see a detailed not found error message
+     */
+    @Test
+    void returnsNotFoundErrorMessageWhenAccountDoesNotExistInDatabase() throws Exception {
+        mockMvc.perform(get("/accounts/{accountId}/transactions", 999))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.type", is("AccountNotFoundException")))
+                .andExpect(jsonPath("$.error.message",
+                        is("The card member account with an id of 999 was not found."))
+                );
     }
 }
