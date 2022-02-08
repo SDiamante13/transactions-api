@@ -1,0 +1,18 @@
+[
+  {
+    "transactionId": "1",
+    "date": "2022-02-01",
+    "amount": 50.0,
+    "merchantName": "Amazon",
+    "summary": "XP Explained (Book)",
+    "accountId": "555"
+  },
+  {
+    "transactionId": "2",
+    "date": "2022-02-02",
+    "amount": 350.0,
+    "merchantName": "Walmart",
+    "summary": "Standing Desk",
+    "accountId": "555"
+  }
+]

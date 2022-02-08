@@ -1,5 +1,6 @@
 package com.kinandcarta.transactionsapi.controller;
 
+import com.kinandcarta.transactionsapi.domain.response.TransactionResponse;
 import com.kinandcarta.transactionsapi.service.TransactionsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,5 +46,27 @@ class AccountTransactionsControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void returnsTransactionsWhenServiceReturnsAccountWithTransactions() throws Exception {
+        given(mockTransactionsService.getTransactions(anyLong()))
+            .willReturn(
+                singletonList(new TransactionResponse(
+                    "1",
+                    "2022-02-01",
+                    200.00,
+                    "Amazon",
+                    "XP Explained (Book)",
+                    "123"
+                ))
+            );
+
+        mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", is(1)))
+            .andExpect(jsonPath("$.[0].accountId", is("123")))
+            .andExpect(jsonPath("$.[0].transactionId", is("1")));
     }
 }
