@@ -2,12 +2,12 @@ package com.kinandcarta.transactionsapi.service;
 
 import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.domain.entity.Transaction;
-import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.domain.exception.AccountNotFoundException;
 import com.kinandcarta.transactionsapi.domain.response.TransactionResponse;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
 import com.kinandcarta.transactionsapi.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,22 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceTest {
 
     private static final long ACCOUNT_ID = 123L;
     public static final Account ACCOUNT = new Account(
-            123L,
+            ACCOUNT_ID,
             "Tony Soprano",
-            null
-    );
-    public static final Transaction TRANSACTION = new Transaction(
-            1L,
-            LocalDate.of(2022, 2, 1).toEpochDay(),
-            50.00,
-            "Amazon",
-            "XP Explained (Book)",
             null
     );
 
@@ -60,7 +53,7 @@ class TransactionsServiceTest {
 
     @BeforeEach
     void setUp() {
-        TRANSACTION.setAccount(ACCOUNT);
+        aTransactionWith(1L, LocalDate.of(2022, 2, 1).toEpochDay()).setAccount(ACCOUNT);
         transactionsService = new TransactionsService(mockTransactionRepository, mockAccountRepository);
     }
 
@@ -71,7 +64,7 @@ class TransactionsServiceTest {
         given(mockAccountRepository.findById(anyLong()))
                 .willReturn(Optional.of(new Account()));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L);
+        List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L, null);
 
         assertThat(actualResponse).isEqualTo(emptyList());
     }
@@ -84,20 +77,48 @@ class TransactionsServiceTest {
                 .willReturn(Optional.empty());
 
         assertThrows(AccountNotFoundException.class,
-                () -> transactionsService.getTransactions(123L)
+                () -> transactionsService.getTransactions(123L, null)
         );
     }
 
     @Test
-    void returnsAccountTransactionResponseWithTransactionsWhenThereAreTransactionsPresentForGivenAccount() {
+    void returnsTransactionResponseWithTransactionsWhenThereAreTransactionsPresentForGivenAccount() {
         given(mockTransactionRepository.findAllByAccount_AccountId(anyLong()))
-                .willReturn(List.of(TRANSACTION));
+                .willReturn(List.of(aTransactionWith(1L, LocalDate.of(2022, 2, 1).toEpochDay())));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID);
+        List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID, null);
 
         assertThat(actualResponse)
                 .isEqualTo(List.of(
                         TRANSACTION_RESPONSE
                 ));
+    }
+
+    @Test
+    void returnsTransactionResponseWithTransactionsOnOrAfterTheGivenFromDate() {
+        given(mockTransactionRepository.findAllByAccountAccountIdAndDateGreaterThanEqual(anyLong(), anyLong()))
+                .willReturn(List.of(
+                        aTransactionWith(1L, LocalDate.of(2022, 2, 5).toEpochDay()),
+                        aTransactionWith(2L, LocalDate.of(2022, 2, 4).toEpochDay())
+                ));
+
+        transactionsService.getTransactions(ACCOUNT_ID, "2022-02-05");
+
+        then(mockTransactionRepository)
+                .should()
+                .findAllByAccountAccountIdAndDateGreaterThanEqual(ACCOUNT_ID, 19028L);
+    }
+
+    private Transaction aTransactionWith(long transactionId, long date) {
+        Account account = new Account();
+        account.setAccountId(ACCOUNT_ID);
+        return new Transaction(
+                transactionId,
+                date,
+                50.00,
+                "Amazon",
+                "XP Explained (Book)",
+                account
+        );
     }
 }

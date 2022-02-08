@@ -24,27 +24,71 @@ class TransactionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Account account = new Account(
-            123L,
-            "Tony Soprano",
-            null
-        );
-        Transaction transaction = new Transaction(
-            456L,
-            LocalDate.of(2022, 2, 2).toEpochDay(),
-            50.00,
-            "Amazon",
-            "XP Explained Book",
-            account
-        );
-        account.setTransactions(Set.of(transaction));
-        accountRepository.save(account);
+        initializeDatabase();
     }
 
     @Test
     void findAllByAccount_AccountIdReturnsListOfTransactionsForGivenAccountId() {
         List<Transaction> actualResponse = transactionRepository.findAllByAccount_AccountId(123L);
+
         assertThat(actualResponse.size()).isEqualTo(1);
         assertThat(actualResponse.get(0).getAccount().getAccountId()).isEqualTo(123L);
+    }
+
+    @Test
+    void findAllByAccountAccountIdAndDateGreaterThanEqual_shouldReturnTransactionsOnOrAfterTheTransactionDate() {
+        List<Transaction> actualTransactions = transactionRepository.findAllByAccountAccountIdAndDateGreaterThanEqual(789L, LocalDate.of(2022, 2, 2).toEpochDay());
+
+        assertThat(actualTransactions.size()).isEqualTo(2);
+        assertThat(actualTransactions).extracting("transactionId")
+                        .contains(2L, 3L);
+    }
+
+    private void initializeDatabase() {
+        saveAccount1();
+        saveAccount2();
+    }
+
+    private void saveAccount1() {
+        Account account1 = new Account(
+                789L,
+                "Bruce Wayne",
+                null
+        );
+        account1.setTransactions(Set.of(
+                aTransactionWith(account1, LocalDate.of(2022, 2, 3).toEpochDay(), 3L),
+                aTransactionWith(account1, LocalDate.of(2022, 2, 2).toEpochDay(), 2L),
+                aTransactionWith(account1, LocalDate.of(2022, 2, 1).toEpochDay(), 1L)
+        ));
+        accountRepository.save(account1);
+    }
+
+    private void saveAccount2() {
+        Account account2 = new Account(
+                123L,
+                "Tony Soprano",
+                null
+        );
+        Transaction transaction = new Transaction(
+                456L,
+                LocalDate.of(2022, 2, 2).toEpochDay(),
+                50.00,
+                "Amazon",
+                "XP Explained Book",
+                account2
+        );
+        account2.setTransactions(Set.of(transaction));
+        accountRepository.save(account2);
+    }
+
+    private Transaction aTransactionWith(Account account, long date, long transactionId) {
+        return new Transaction(
+                transactionId,
+                date,
+                50.00,
+                "Amazon",
+                "TDD By Example",
+                account
+        );
     }
 }

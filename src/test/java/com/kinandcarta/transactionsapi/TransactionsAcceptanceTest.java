@@ -127,4 +127,26 @@ class TransactionsAcceptanceTest {
                         is("The card member account with an id of 999 was not found."))
                 );
     }
+
+    /***
+     * Scenario 4: Retrieve transactions for an account after a given a date
+     *
+     * GIVEN a card member account with transactions
+     * WHEN I request a list of transactions after the given date
+     * THEN I will receive a success response
+     * AND I will see a list of transactions that occurred on and after the given date
+     */
+    @Test
+    void returnsOnlyTransactionsThatOccurOnOrAfterTheGivenDate() throws Exception {
+        String expectedResponse = JSONTestUtils.readFile("expectedFilteredTransactionsResponse.json");
+
+        String actualResponse = mockMvc.perform(get("/accounts/{accountId}/transactions?fromDate=2022-02-02", ACCOUNT_ID_WITH_TRANSACTIONS))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
+    }
 }

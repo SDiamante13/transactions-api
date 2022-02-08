@@ -16,7 +16,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,7 +44,7 @@ class AccountTransactionsControllerTest {
 
     @Test
     void returnsEmptyTransactionsWhenServiceReturnsAccountWithNoTransactions() throws Exception {
-        given(mockTransactionsService.getTransactions(anyLong()))
+        given(mockTransactionsService.getTransactions(anyLong(), eq(null)))
                 .willReturn(emptyList());
 
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
@@ -53,7 +55,7 @@ class AccountTransactionsControllerTest {
 
     @Test
     void returnsNotFoundErrorMessageWhenServiceThrowsAnAccountNotFoundException() throws Exception {
-        given(mockTransactionsService.getTransactions(anyLong()))
+        given(mockTransactionsService.getTransactions(anyLong(), eq(null)))
                 .willThrow(new AccountNotFoundException(999L));
 
         mockMvc.perform(get("/accounts/{accountId}/transactions", 999))
@@ -68,7 +70,7 @@ class AccountTransactionsControllerTest {
 
     @Test
     void returnsTransactionsWhenServiceReturnsAccountWithTransactions() throws Exception {
-        given(mockTransactionsService.getTransactions(anyLong()))
+        given(mockTransactionsService.getTransactions(anyLong(), eq(null)))
                 .willReturn(
                         singletonList(new TransactionResponse(
                                 "1",
@@ -86,5 +88,16 @@ class AccountTransactionsControllerTest {
                 .andExpect(jsonPath("$.length()", is(1)))
                 .andExpect(jsonPath("$.[0].accountId", is("123")))
                 .andExpect(jsonPath("$.[0].transactionId", is("1")));
+    }
+
+    @Test
+    void returnsFilteredTransactionsWhenOptionalFromDateParameterIsIncluded() throws Exception {
+        mockMvc.perform(get("/accounts/{accountId}/transactions?fromDate=2022-02-02", 123))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        then(mockTransactionsService)
+                .should()
+                .getTransactions(123, "2022-02-02");
     }
 }
