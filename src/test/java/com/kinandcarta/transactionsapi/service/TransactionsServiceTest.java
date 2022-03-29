@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -53,7 +54,6 @@ class TransactionsServiceTest {
 
     @BeforeEach
     void setUp() {
-        aTransactionWith(1L, LocalDate.of(2022, 2, 1).toEpochDay()).setAccount(ACCOUNT);
         transactionsService = new TransactionsService(mockTransactionRepository, mockAccountRepository);
     }
 
