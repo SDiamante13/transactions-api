@@ -34,9 +34,12 @@ public class LoggingAspect {
 
     private void logTimeTaken(ProceedingJoinPoint proceedingJoinPoint, StopWatch stopWatch) {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-        log.info("Execution time of " + stopWatch.getTotalTimeMillis() + " ms for " +
-                methodSignature.getDeclaringType().getSimpleName() +
-                "::" + methodSignature.getName()
+        log.info("Execution time of "
+                + stopWatch.getTotalTimeMillis()
+                + " ms for "
+                + methodSignature.getDeclaringType().getSimpleName()
+                + "::"
+                + methodSignature.getName()
         );
     }
 }
