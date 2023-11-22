@@ -22,7 +22,7 @@ public class TransactionsService {
         this.accountRepository = accountRepository;
     }
 
-    public List<TransactionResponse> getTransactions(long accountId, String fromDate) {
+    public List<TransactionResponse> getTransactions(long accountId, String fromDate) throws AccountNotFoundException {
         final List<Transaction> transactionList = fromDate != null
                 ? transactionRepository.findAllByAccountAccountIdAndDateGreaterThanEqual(accountId, LocalDate.parse(fromDate).toEpochDay())
                 : transactionRepository.findAllByAccount_AccountId(accountId);
