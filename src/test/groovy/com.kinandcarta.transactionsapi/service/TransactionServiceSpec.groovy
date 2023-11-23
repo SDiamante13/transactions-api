@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-class TransactionServicesSpec extends Specification {
+class TransactionServiceSpec extends Specification {
     private TransactionRepository transactionRepositoryMock;
     private AccountRepository accountRepositoryMock
     private TransactionsService transactionsService
@@ -35,10 +35,10 @@ class TransactionServicesSpec extends Specification {
                 account: new Account(accountId: 0)
         )
 
-        when: "transaction service is invoked with an accountId and fromDate"
+        when: "getTransactions is invoked"
         def actual = transactionsService.getTransactions(accountId, fromDate)
 
-        then: "will return expected transaction"
+        then: "returns expected transaction"
         verifyAll {
             1 * transactionRepositoryMock
                     .findAllByAccountAccountIdAndDateGreaterThanEqual(accountId, startDate.toEpochDay()) >> [transaction]
@@ -48,7 +48,7 @@ class TransactionServicesSpec extends Specification {
         actual == [TransactionResponse.of(transaction)]
     }
 
-    def "should retrieve transaction without a fromDate"() {
+    def "should retrieve transaction"() {
         given: "an accountId"
         final def accountId = 21324L
         final def transaction = new Transaction(
@@ -60,10 +60,10 @@ class TransactionServicesSpec extends Specification {
                 account: new Account(accountId: 0)
         )
 
-        when: "transaction service is invoked with an accountId"
+        when: "getTransactions is invoked"
         def actual = transactionsService.getTransactions(accountId, null)
 
-        then: "will return expected transaction"
+        then: "returns expected transaction"
         verifyAll {
             1 * transactionRepositoryMock
                     .findAllByAccount_AccountId(accountId) >> [transaction]
@@ -73,7 +73,7 @@ class TransactionServicesSpec extends Specification {
         actual == [TransactionResponse.of(transaction)]
     }
 
-    def "should retrieve transaction"() {
+    def "should retrieve empty transactions"() {
         given: "an accountId"
         final def accountId = 21324L
         final def transaction = new Transaction(
@@ -85,10 +85,10 @@ class TransactionServicesSpec extends Specification {
                 account: new Account(accountId: 0)
         )
 
-        when: "transaction service is invoked with an accountId"
+        when: "getTransaction is invoked but repository returns no results"
         def actual = transactionsService.getTransactions(accountId, null)
 
-        then: "will return expected transaction"
+        then: "transactions will be empty"
         verifyAll {
             1 * transactionRepositoryMock.findAllByAccount_AccountId(accountId) >> List.of()
             1 * accountRepositoryMock.findById(accountId)
@@ -98,17 +98,17 @@ class TransactionServicesSpec extends Specification {
         actual.isEmpty()
     }
 
-    def "should retrieve transaction"() {
+    def "should throw an AccountNotFoundException"() {
         given: "an accountId"
         final def accountId = 21324L
 
         transactionRepositoryMock.findAllByAccount_AccountId(accountId) >> List.of()
         accountRepositoryMock.findById(accountId) >> Optional.empty()
 
-        when: "transaction service is invoked with an accountId"
+        when: "getTransactions is invoked but no Account is found"
         transactionsService.getTransactions(accountId, null)
 
-        then: "will return expected transaction"
+        then: "throws an AccountNotFoundException"
         def actual = thrown(AccountNotFoundException)
         actual.message == "The card member account with an id of ${accountId} was not found."
     }
