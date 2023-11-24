@@ -22,7 +22,6 @@ public class AccountTransactionsController {
             @PathVariable long accountId,
             @RequestParam(required = false) String fromDate
     ) {
-        System.out.println("hi im from date " + fromDate);
         return ResponseEntity.ok(transactionsService.getTransactions(accountId, fromDate));
     }
 }

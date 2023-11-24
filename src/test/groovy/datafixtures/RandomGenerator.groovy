@@ -9,6 +9,10 @@ class RandomGenerator {
         return new Random().nextLong()
      }
 
+    static def randomInt() {
+        return new Random().nextInt()
+    }
+
     static def randomBigDecimal() {
         Random random = new Random();
         double randomDouble = random.nextDouble();
