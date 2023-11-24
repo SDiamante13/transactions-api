@@ -24,18 +24,18 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Account account = new Account(
-            123L,
-            "Tony Soprano",
-            emptySet()
+        final Account account = new Account(
+                123L,
+                "Tony Soprano",
+                emptySet()
         );
-        Transaction transaction = new Transaction(
-            456L,
-            LocalDate.of(2022, 2, 2).toEpochDay(),
-            50.00,
-            "Amazon",
-            "XP Explained Book",
-            account
+        final Transaction transaction = new Transaction(
+                456L,
+                LocalDate.of(2022, 2, 2).toEpochDay(),
+                50.00,
+                "Amazon",
+                "XP Explained Book",
+                account
         );
         account.setTransactions(Set.of(transaction));
         accountRepository.save(account);

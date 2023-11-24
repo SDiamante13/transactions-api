@@ -64,7 +64,7 @@ class TransactionsServiceTest {
         given(mockAccountRepository.findById(anyLong()))
                 .willReturn(Optional.of(new Account()));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L, null);
+        final List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L, null);
 
         assertThat(actualResponse).isEqualTo(emptyList());
     }
@@ -86,7 +86,7 @@ class TransactionsServiceTest {
         given(mockTransactionRepository.findAllByAccount_AccountId(anyLong()))
                 .willReturn(List.of(aTransactionWith(1L, LocalDate.of(2022, 2, 1).toEpochDay())));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID, null);
+        final List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID, null);
 
         assertThat(actualResponse)
                 .isEqualTo(List.of(
@@ -110,7 +110,7 @@ class TransactionsServiceTest {
     }
 
     private Transaction aTransactionWith(long transactionId, long date) {
-        Account account = new Account();
+        final Account account = new Account();
         account.setAccountId(ACCOUNT_ID);
         return new Transaction(
                 transactionId,

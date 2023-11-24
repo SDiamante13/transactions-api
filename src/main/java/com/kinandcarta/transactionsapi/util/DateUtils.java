@@ -9,7 +9,7 @@ public class DateUtils {
     }
 
     public static String formatEpochDateAsString(long date, String pattern) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
         return dateTimeFormatter.format(LocalDate.ofEpochDay(date));
     }
 }
