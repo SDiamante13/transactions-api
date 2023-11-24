@@ -22,7 +22,7 @@ public class TransactionsService {
     }
 
     public List<TransactionResponse> getTransactions(long accountId, String fromDate) {
-        List<Transaction> transactionList = fromDate != null
+        final List<Transaction> transactionList = fromDate != null
                 ? transactionRepository.findAllByAccountAccountIdAndDateGreaterThanEqual(accountId, LocalDate.parse(fromDate).toEpochDay())
                 : transactionRepository.findAllByAccount_AccountId(accountId);
         if (transactionList.isEmpty()) {

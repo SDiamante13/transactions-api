@@ -8,7 +8,7 @@ import java.nio.file.Files;
 
 public class JSONTestUtils {
     public static String readFile(String fileName) throws IOException {
-        File file = ResourceUtils.getFile("classpath:" + fileName);
+        final File file = ResourceUtils.getFile("classpath:" + fileName);
         return new String(Files.readAllBytes(file.toPath()));
     }
 }

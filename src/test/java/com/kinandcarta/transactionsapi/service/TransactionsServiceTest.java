@@ -7,11 +7,9 @@ import com.kinandcarta.transactionsapi.domain.response.TransactionResponse;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
 import com.kinandcarta.transactionsapi.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -28,13 +26,6 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceTest {
 
-    private static final long ACCOUNT_ID = 123L;
-    public static final Account ACCOUNT = new Account(
-            ACCOUNT_ID,
-            "Tony Soprano",
-            null
-    );
-
     public static final TransactionResponse TRANSACTION_RESPONSE =
             new TransactionResponse(
                     "1",
@@ -44,7 +35,12 @@ class TransactionsServiceTest {
                     "XP Explained (Book)",
                     "123"
             );
-
+    private static final long ACCOUNT_ID = 123L;
+    public static final Account ACCOUNT = new Account(
+            ACCOUNT_ID,
+            "Tony Soprano",
+            null
+    );
     @Mock
     private TransactionRepository mockTransactionRepository;
     @Mock
@@ -64,7 +60,7 @@ class TransactionsServiceTest {
         given(mockAccountRepository.findById(anyLong()))
                 .willReturn(Optional.of(new Account()));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L, null);
+        final List<TransactionResponse> actualResponse = transactionsService.getTransactions(123L, null);
 
         assertThat(actualResponse).isEqualTo(emptyList());
     }
@@ -86,7 +82,7 @@ class TransactionsServiceTest {
         given(mockTransactionRepository.findAllByAccount_AccountId(anyLong()))
                 .willReturn(List.of(aTransactionWith(1L, LocalDate.of(2022, 2, 1).toEpochDay())));
 
-        List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID, null);
+        final List<TransactionResponse> actualResponse = transactionsService.getTransactions(ACCOUNT_ID, null);
 
         assertThat(actualResponse)
                 .isEqualTo(List.of(
@@ -110,7 +106,7 @@ class TransactionsServiceTest {
     }
 
     private Transaction aTransactionWith(long transactionId, long date) {
-        Account account = new Account();
+        final Account account = new Account();
         account.setAccountId(ACCOUNT_ID);
         return new Transaction(
                 transactionId,
