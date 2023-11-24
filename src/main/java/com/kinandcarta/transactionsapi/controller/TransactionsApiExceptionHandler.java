@@ -20,7 +20,6 @@ public class TransactionsApiExceptionHandler {
     private ErrorResponse buildErrorResponse(Exception ex) {
         String type = ex.getClass().getSimpleName();
         String message = ex.getMessage();
-
         return new ErrorResponse(new Error(type, message));
     }
 }
