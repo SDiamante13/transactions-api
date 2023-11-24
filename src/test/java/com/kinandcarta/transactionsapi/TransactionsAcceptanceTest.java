@@ -3,7 +3,6 @@ package com.kinandcarta.transactionsapi;
 import com.kinandcarta.transactionsapi.domain.entity.Account;
 import com.kinandcarta.transactionsapi.domain.entity.Transaction;
 import com.kinandcarta.transactionsapi.repository.AccountRepository;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,22 +44,22 @@ class TransactionsAcceptanceTest {
         final Account accountWithoutTransactions = new Account(ACCOUNT_ID_WITHOUT_TRANSACTIONS, MEMBER_NAME, emptySet());
         final Account accountWithTransactions = new Account(ACCOUNT_ID_WITH_TRANSACTIONS, MEMBER_NAME, null);
         accountWithTransactions.setTransactions(Set.of(
-            new Transaction(
-                1L,
-                LocalDate.of(2022, 2, 1).toEpochDay(),
-                50.00,
-                "Amazon",
-                "XP Explained (Book)",
-                accountWithTransactions
-            ),
-            new Transaction(
-                2L,
-                LocalDate.of(2022, 2, 2).toEpochDay(),
-                350.00,
-                "Walmart",
-                "Standing Desk",
-                accountWithTransactions
-            )
+                new Transaction(
+                        1L,
+                        LocalDate.of(2022, 2, 1).toEpochDay(),
+                        50.00,
+                        "Amazon",
+                        "XP Explained (Book)",
+                        accountWithTransactions
+                ),
+                new Transaction(
+                        2L,
+                        LocalDate.of(2022, 2, 2).toEpochDay(),
+                        350.00,
+                        "Walmart",
+                        "Standing Desk",
+                        accountWithTransactions
+                )
         ));
         accountRepository.save(accountWithoutTransactions);
         accountRepository.save(accountWithTransactions);
@@ -82,9 +81,9 @@ class TransactionsAcceptanceTest {
     @Test
     void returnsEmptyTransactionListWhenAccountHasNoTransactions() throws Exception {
         mockMvc.perform(get("/accounts/{accountId}/transactions", 123))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isEmpty());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     /***
@@ -100,11 +99,11 @@ class TransactionsAcceptanceTest {
         final String expectedResponse = JSONTestUtils.readFile("expectedTransactionsResponse.json");
 
         final String actualResponse = mockMvc.perform(get("/accounts/{accountId}/transactions", ACCOUNT_ID_WITH_TRANSACTIONS))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         JSONAssert.assertEquals(expectedResponse, actualResponse, JSONCompareMode.LENIENT);
     }

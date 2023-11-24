@@ -41,7 +41,7 @@ class TransactionRepositoryTest {
 
         assertThat(actualTransactions.size()).isEqualTo(2);
         assertThat(actualTransactions).extracting("transactionId")
-                        .contains(2L, 3L);
+                .contains(2L, 3L);
     }
 
     private void initializeDatabase() {
