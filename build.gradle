@@ -18,6 +18,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    jcenter() // puppycrawl is located here
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     testImplementation 'junit:junit:4.12' // Add JUnit dependency
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    checkstyle 'com.puppycrawl.tools:checkstyle:10.12.5'
 }
 
 test {

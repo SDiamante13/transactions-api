@@ -19,7 +19,7 @@ public class LoggingAspect {
     public Object logMethodExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         final StopWatch stopWatch = new StopWatch();
 
-        Object result = callMethod(proceedingJoinPoint, stopWatch);
+        final Object result = callMethod(proceedingJoinPoint, stopWatch);
         logTimeTaken(proceedingJoinPoint, stopWatch);
 
         return result;
@@ -27,13 +27,13 @@ public class LoggingAspect {
 
     private Object callMethod(ProceedingJoinPoint proceedingJoinPoint, StopWatch stopWatch) throws Throwable {
         stopWatch.start();
-        Object result = proceedingJoinPoint.proceed();
+        final Object result = proceedingJoinPoint.proceed();
         stopWatch.stop();
         return result;
     }
 
     private void logTimeTaken(ProceedingJoinPoint proceedingJoinPoint, StopWatch stopWatch) {
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+        final MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         log.info("Execution time of "
                 + stopWatch.getTotalTimeMillis()
                 + " ms for "
