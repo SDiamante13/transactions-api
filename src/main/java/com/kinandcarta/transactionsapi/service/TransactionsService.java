@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class TransactionsService {
@@ -21,10 +22,11 @@ public class TransactionsService {
         this.accountRepository = accountRepository;
     }
 
-    public List<TransactionResponse> getTransactions(long accountId, String fromDate) {
+    public List<TransactionResponse> getTransactions(long accountId, String fromDate) throws AccountNotFoundException {
         final List<Transaction> transactionList = fromDate != null
                 ? transactionRepository.findAllByAccountAccountIdAndDateGreaterThanEqual(accountId, LocalDate.parse(fromDate).toEpochDay())
                 : transactionRepository.findAllByAccount_AccountId(accountId);
+
         if (transactionList.isEmpty()) {
             accountRepository.findById(accountId)
                     .orElseThrow(() -> new AccountNotFoundException(accountId));
@@ -32,6 +34,6 @@ public class TransactionsService {
 
         return transactionList.stream()
                 .map(TransactionResponse::of)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }
