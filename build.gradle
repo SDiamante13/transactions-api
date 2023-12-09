@@ -36,3 +36,6 @@ task checkstyle {
     dependsOn 'checkstyleMain'
     tasks.findByName('checkstyleMain').mustRunAfter 'checkstyleTest'
 }
+task checkWithTest(dependsOn: ['checkstyle', 'test'])
+
+test.finalizedBy checkWithTest
